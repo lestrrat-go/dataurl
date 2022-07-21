@@ -1,0 +1,40 @@
+package_name: dataurl
+output: options_gen.go
+interfaces:
+  - name: EncodeOption
+    comment: |
+      EncodeOption is a type of option that can be passed to Encode()
+options:
+  - ident: Base64Encoding
+    interface: EncodeOption
+    argument_type: bool
+    comment: |
+      WithBase64Encoding specifies if the payload should or should not
+      be base64 encoded. Specifying this option overrides the automatic
+      detection that is performed by default, where any payload without
+      an explciit `text/****` media type will be base64 encoded
+  - ident: MediaType
+    interface: EncodeOption
+    argument_type: string
+    comment: |
+      WithMediaType allows users to specify an explciit media type for the
+      data to be encoded.
+      
+      If unspecified, `"net/http".DetectContentType` will be used to sniff
+      the media type.
+      
+      You may include parameters (e.g. `charset=utf-8`) in this string as well,
+      but it is the caller's responsibility to make sure that it is well-formed.
+  - ident: MediaTypeParams
+    interface: EncodeOption
+    argument_type: map[string]string
+    comment: |
+      WithMediaTypeParams allows users to provide extra media type parameters,
+      such as `charset=utf-8` as a map.
+      
+      Upon any conflict, values provided in this map will overwrite the
+      values found in the media type string provided either explcitly by the
+      user or by auto-detection.
+
+      It is the user's reponsibility to properly format the parameter names,
+      such as properly making everything lower-case (or not).
