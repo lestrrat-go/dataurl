@@ -270,7 +270,7 @@ func Encode(data []byte, options ...EncodeOption) ([]byte, error) {
 
 	if encodeBase64 {
 		enc := base64.NewEncoder(b64enc, &dst)
-		enc.Write(data)
+		_, _ = enc.Write(data)
 		enc.Close()
 	} else {
 		writeEscapedSequence(&dst, data)
