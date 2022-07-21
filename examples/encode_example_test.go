@@ -7,6 +7,7 @@ import (
 	"github.com/lestrrat-go/dataurl"
 )
 
+//nolint:govet
 func ExampleEncodePlainText() {
 	// Let dataurl.Encode fiture out the media type
 	encoded, err := dataurl.Encode([]byte(`Hello, World!`))
@@ -24,6 +25,7 @@ func ExampleEncodePlainText() {
 	//
 }
 
+//nolint:govet
 func ExampleEncodeBinaryFile() {
 	// It works on binary files too
 	rawimg, err := base64.StdEncoding.DecodeString(gopher)
@@ -49,6 +51,7 @@ func ExampleEncodeBinaryFile() {
 	//
 }
 
+//nolint:govet
 func ExampleExplicitMediaType() {
 	// You can overwrite the media type
 
@@ -113,6 +116,7 @@ func ExampleExplicitMediaType() {
 	//
 }
 
+//nolint:govet
 func ExampleEncodeToggleBase64() {
 	// Explicitly specify to enable or disable base64
 
