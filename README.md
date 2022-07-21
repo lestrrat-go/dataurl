@@ -7,10 +7,10 @@ Parse and encode RFC2397 "data' URL scheme.
 
 ## Encoding
 
-<!-- INCLUDE examples/encode_example_test.go -->
+<!-- INCLUDE(examples/encode_example_test.go) -->
 <!-- END INCLUDE -->
 
 ## Parsing
 
-<!-- INCLUDE examples/parse_example_test.go -->
+<!-- INCLUDE(examples/parse_example_test.go) -->
 <!-- END INCLUDE -->
