@@ -7,65 +7,14 @@ import (
 	"github.com/lestrrat-go/dataurl"
 )
 
-//nolint:govet
-func ExampleEncodePlainText() {
-	// Let dataurl.Encode fiture out the media type
-	encoded, err := dataurl.Encode([]byte(`Hello, World!`))
-	if err != nil {
-		fmt.Printf("failed to encode: %s", err)
-		return
-	}
-	const expected = `data:text/plain;charset=utf-8,Hello%2C%20World!`
-	if string(encoded) != expected {
-		fmt.Printf("expected: %q\n", expected)
-		fmt.Printf("actual:   %q\n", encoded)
-		return
-	}
-	// OUTPUT:
-	//
-}
-
-//nolint:govet
-func ExampleEncodeBinaryFile() {
-	// It works on binary files too
-	rawimg, err := base64.StdEncoding.DecodeString(gopher)
-	if err != nil {
-		fmt.Printf("failed to decode gopher image: %s", err)
-		return
-	}
-
-	encoded, err := dataurl.Encode(rawimg)
-	if err != nil {
-		fmt.Printf("failed to encode: %s", err)
-		return
-	}
-
-	var expected = `data:image/png;base64,` + gopher
-	if string(encoded) != expected {
-		fmt.Printf("expected: %q\n", expected)
-		fmt.Printf("actual:   %q\n", encoded)
-		return
-	}
-
-	// OUTPUT:
-	//
-}
-
-//nolint:govet
-func ExampleExplicitMediaType() {
-	// You can overwrite the media type
-
-	{ // First case, only supply the main media type
-		encoded, err := dataurl.Encode(
-			[]byte(`{"Hello":"World!"}`),
-			dataurl.WithMediaType(`application/json`),
-		)
-
+func ExampleEncode() {
+	{ // Let dataurl.Encode fiture out the media type
+		encoded, err := dataurl.Encode([]byte(`Hello, World!`))
 		if err != nil {
 			fmt.Printf("failed to encode: %s", err)
 			return
 		}
-		const expected = `data:application/json;base64,eyJIZWxsbyI6IldvcmxkISJ9`
+		const expected = `data:text/plain;charset=utf-8,Hello%2C%20World!`
 		if string(encoded) != expected {
 			fmt.Printf("expected: %q\n", expected)
 			fmt.Printf("actual:   %q\n", encoded)
@@ -73,17 +22,20 @@ func ExampleExplicitMediaType() {
 		}
 	}
 
-	{ // Second case, supply the mdia type and parameters as a string
-		encoded, err := dataurl.Encode(
-			[]byte(`{"Hello":"World!"}`),
-			dataurl.WithMediaType(`application/json; charset=utf-8`),
-		)
+	{ // It works on binary files too
+		rawimg, err := base64.StdEncoding.DecodeString(gopher)
+		if err != nil {
+			fmt.Printf("failed to decode gopher image: %s", err)
+			return
+		}
 
+		encoded, err := dataurl.Encode(rawimg)
 		if err != nil {
 			fmt.Printf("failed to encode: %s", err)
 			return
 		}
-		const expected = `data:application/json;charset=utf-8;base64,eyJIZWxsbyI6IldvcmxkISJ9`
+
+		var expected = `data:image/png;base64,` + gopher
 		if string(encoded) != expected {
 			fmt.Printf("expected: %q\n", expected)
 			fmt.Printf("actual:   %q\n", encoded)
@@ -91,72 +43,107 @@ func ExampleExplicitMediaType() {
 		}
 	}
 
-	{ // Third case, supply the mdia type as string, and parameters as a map
-		// Notice that the parameters OVERWRITE the value given in the string media type
-		encoded, err := dataurl.Encode(
-			[]byte(`{"Hello":"World!"}`),
-			dataurl.WithMediaType(`application/json; charset=us-ascii`),
-			dataurl.WithMediaTypeParams(map[string]string{
-				`charset`: `utf-8`,
-			}),
-		)
+	{ // You can overwrite the media type
 
-		if err != nil {
-			fmt.Printf("failed to encode: %s", err)
-			return
+		{ // First case, only supply the main media type
+			encoded, err := dataurl.Encode(
+				[]byte(`{"Hello":"World!"}`),
+				dataurl.WithMediaType(`application/json`),
+			)
+
+			if err != nil {
+				fmt.Printf("failed to encode: %s", err)
+				return
+			}
+			const expected = `data:application/json;base64,eyJIZWxsbyI6IldvcmxkISJ9`
+			if string(encoded) != expected {
+				fmt.Printf("expected: %q\n", expected)
+				fmt.Printf("actual:   %q\n", encoded)
+				return
+			}
 		}
-		const expected = `data:application/json;charset=utf-8;base64,eyJIZWxsbyI6IldvcmxkISJ9`
-		if string(encoded) != expected {
-			fmt.Printf("expected: %q\n", expected)
-			fmt.Printf("actual:   %q\n", encoded)
-			return
+
+		{ // Second case, supply the mdia type and parameters as a string
+			encoded, err := dataurl.Encode(
+				[]byte(`{"Hello":"World!"}`),
+				dataurl.WithMediaType(`application/json; charset=utf-8`),
+			)
+
+			if err != nil {
+				fmt.Printf("failed to encode: %s", err)
+				return
+			}
+			const expected = `data:application/json;charset=utf-8;base64,eyJIZWxsbyI6IldvcmxkISJ9`
+			if string(encoded) != expected {
+				fmt.Printf("expected: %q\n", expected)
+				fmt.Printf("actual:   %q\n", encoded)
+				return
+			}
+		}
+
+		{ // Third case, supply the mdia type as string, and parameters as a map
+			// Notice that the parameters OVERWRITE the value given in the string media type
+			encoded, err := dataurl.Encode(
+				[]byte(`{"Hello":"World!"}`),
+				dataurl.WithMediaType(`application/json; charset=us-ascii`),
+				dataurl.WithMediaTypeParams(map[string]string{
+					`charset`: `utf-8`,
+				}),
+			)
+
+			if err != nil {
+				fmt.Printf("failed to encode: %s", err)
+				return
+			}
+			const expected = `data:application/json;charset=utf-8;base64,eyJIZWxsbyI6IldvcmxkISJ9`
+			if string(encoded) != expected {
+				fmt.Printf("expected: %q\n", expected)
+				fmt.Printf("actual:   %q\n", encoded)
+				return
+			}
 		}
 	}
-	// OUTPUT:
-	//
-}
 
-//nolint:govet
-func ExampleEncodeToggleBase64() {
-	// Explicitly specify to enable or disable base64
+	{ // Explicitly specify to enable or disable base64
 
-	{ // First case: by default this would NOT be base64 encoded,
-		// but you can force it to do so
-		encoded, err := dataurl.Encode(
-			[]byte(`Hello, World!`),
-			dataurl.WithBase64Encoding(true),
-		)
-		if err != nil {
-			fmt.Printf("failed to encode: %s", err)
-			return
+		{ // First case: by default this would NOT be base64 encoded,
+			// but you can force it to do so
+			encoded, err := dataurl.Encode(
+				[]byte(`Hello, World!`),
+				dataurl.WithBase64Encoding(true),
+			)
+			if err != nil {
+				fmt.Printf("failed to encode: %s", err)
+				return
+			}
+			const expected = `data:text/plain;charset=utf-8;base64,SGVsbG8sIFdvcmxkIQ==`
+			if string(encoded) != expected {
+				fmt.Printf("expected: %q\n", expected)
+				fmt.Printf("actual:   %q\n", encoded)
+				return
+			}
 		}
-		const expected = `data:text/plain;charset=utf-8;base64,SGVsbG8sIFdvcmxkIQ==`
-		if string(encoded) != expected {
-			fmt.Printf("expected: %q\n", expected)
-			fmt.Printf("actual:   %q\n", encoded)
-			return
-		}
-	}
 
-	{ // Second case: by defualt his would be base64 encoded,
-		// but you can force it to emit plain text
-		// Note that this would produce really bad results if your data is
-		// actually binary
-		encoded, err := dataurl.Encode(
-			[]byte(`{"Hello":"World!"}`),
-			dataurl.WithMediaType(`application/json`),
-			dataurl.WithBase64Encoding(false),
-		)
+		{ // Second case: by defualt his would be base64 encoded,
+			// but you can force it to emit plain text
+			// Note that this would produce really bad results if your data is
+			// actually binary
+			encoded, err := dataurl.Encode(
+				[]byte(`{"Hello":"World!"}`),
+				dataurl.WithMediaType(`application/json`),
+				dataurl.WithBase64Encoding(false),
+			)
 
-		if err != nil {
-			fmt.Printf("failed to encode: %s", err)
-			return
-		}
-		const expected = `data:application/json,%7B%22Hello%22%3A%22World!%22%7D`
-		if string(encoded) != expected {
-			fmt.Printf("expected: %q\n", expected)
-			fmt.Printf("actual:   %q\n", encoded)
-			return
+			if err != nil {
+				fmt.Printf("failed to encode: %s", err)
+				return
+			}
+			const expected = `data:application/json,%7B%22Hello%22%3A%22World!%22%7D`
+			if string(encoded) != expected {
+				fmt.Printf("expected: %q\n", expected)
+				fmt.Printf("actual:   %q\n", encoded)
+				return
+			}
 		}
 	}
 
